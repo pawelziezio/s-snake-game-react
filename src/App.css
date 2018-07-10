@@ -1,37 +1,87 @@
 :root{
-  --cell-size: 26px;
-  font-size: 16px;
+  	--cell-size: 26px;
+  	font-size: 16px;
 }
 
 
 *{
-  box-sizing: border-box;
-  transition: all .1s;
-  font-family: Verdana, Tahoma, sans-serif;
-  margin: 0;
-  padding: 0;
+  	box-sizing: border-box;
+  	transition: all .1s;
+  	font-family: Verdana, Tahoma, sans-serif;
+  	margin: 0;
+  	padding: 0;
 }
 
 body{
-  /* background: #000; */
-  background: #666;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  	/* background: #000; */
+  	background: #666;
+  	height: 100vh;
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
 }
 
 .game__grid{
-  display: flex;
-  flex-wrap: wrap;
-  width: calc(var(--cell-size) * 20);
+  	display: flex;
+  	flex-wrap: wrap;
+  	width: calc(var(--cell-size) * 20);
 }
 
 .grid__cell{
-  background:#999;
-  border: 1px solid #666;
-  height: var(--cell-size);
-  width: var(--cell-size);
-  border-radius: 2px;
+  	background:#999;
+  	border: 1px solid #666;
+	height: var(--cell-size);
+  	width: var(--cell-size);
+  	border-radius: 2px;
+}
+.grid__cell-snake{
+  	background: #fff;
+}
+.grid__cell-apple{
+	background: url(./img/004-fruit.png) center center no-repeat, #999;
+	background-size:85%;
+}
+.grid__cell-bomb{
+	background: url(./img/012-risk-skull.png)center center no-repeat, #999;
+	background-size:85%;
 }
 
+.game__board-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0000cc;
+    font-size: 1.6rem;
+    font-weight: bold;
+    opacity: .85;
+    border-radius: 2px;
+    cursor: pointer;
+    line-height: 2.6rem;
+    transition: all .2s;
+	border: 1px solid black;
+	cursor: pointer;
+}
+
+.game__board-overlay button{
+	background-color: transparent;
+	padding: 1em 2em;
+	outline: none;
+	border: none;
+	font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.game__board-overlay:hover{
+    top: 49.8%;
+    box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+}
+
+.game__board-overlay:active{
+    top: 50%;
+    box-shadow: none;
+}
+
+.mb-1{
+	margin-bottom: 1rem;
+}
