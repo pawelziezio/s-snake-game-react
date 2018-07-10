@@ -17,6 +17,7 @@ class App extends Component {
       	direction: 1,
       	cellsX: 20,
       	cellsY: 20,
+		speed: 400,
       	clickable: true
     	};
 
@@ -30,13 +31,13 @@ class App extends Component {
 
 	startGame() {
 
-		this.moveSnakeInterval = setInterval(this.moveSnake, 400);
-		this.showApple();
-
 		this.setState({
       		status: 1,
       		snake: [[10,10],[11,10],[12,10],[13,10]],
     	});
+
+		this.moveSnakeTimeoue = setTimeout(this.moveSnake, this.state.speed);
+		this.showApple();
 	}
 
 
@@ -63,7 +64,11 @@ class App extends Component {
 	showApple() {
     	const x = Math.floor(Math.random() * this.state.cellsX);
     	const y = Math.floor(Math.random() * this.state.cellsY);
-    	this.setState({ apple: [x, y] });
+		if(collisionTest(x, y, this.state.snake)){
+			this.showApple();
+		}else{
+    		this.setState({ apple: [x, y] });
+		}
   	}
 
 
@@ -95,12 +100,18 @@ class App extends Component {
 		if( collisionTest(this.state.apple[0],this.state.apple[1],newSnake) ){
 			newSnake.push( ...this.state.snake);
 			this.showApple();
+
+			if(newSnake.length % 5 === 0) {
+				let speed = this.state.speed / 1.25;
+				this.setState({ speed })}
 		}else{
 			newSnake.push( ...this.state.snake);
 			newSnake.pop();
 		}
 
     	this.setState({ snake: newSnake });
+
+		this.moveSnakeTimeoue = setTimeout(this.moveSnake, this.state.speed);
 	};
 
 	componentDidMount(){
