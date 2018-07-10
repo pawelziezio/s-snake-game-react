@@ -7,8 +7,8 @@ class App extends Component {
   	constructor(props) {
     	super(props);
     	this.state = {
-      	snake: [[10,10]],
-      	apple: [0,0],
+      	snake: [[10,10],[11,10],[12,10],[13,10]],
+      	apple: [],
       	bombs: [],
       	// 0 = not started, 1 = in progress, 2= finished
       	status: 0,
@@ -18,7 +18,83 @@ class App extends Component {
       	cellsY: 20,
       	clickable: true
     	};
-  	};
+
+		this.startGame = this.startGame.bind(this);
+		this.moveSnake = this.moveSnake.bind(this);
+		this.setDirection = this.setDirection.bind(this);
+
+  	}
+
+
+	startGame() {
+
+		this.moveSnakeInterval = setInterval(this.moveSnake, 400);
+
+		this.setState({
+      		status: 1,
+      		snake: [[10,10],[11,10],[12,10],[13,10]],
+      		apple: [1, 1]
+    	});
+
+	}
+
+
+	setDirection(e){
+		switch(e.keyCode) {
+			case 37:
+				if(this.state.direction !== 2) this.setState({direction: 4});
+				break;
+			case 38:
+				if(this.state.direction !== 3) this.setState({direction: 1});
+				break;
+			case 39:
+				if(this.state.direction !== 4) this.setState({direction: 2});
+				break;
+			case 40:
+				if(this.state.direction !== 1) this.setState({direction: 3});
+				break;
+			default:
+				break;
+		}
+    }
+
+
+
+
+	moveSnake() {
+		const newSnake = [];
+		// set in the new "head" of the snake
+		switch (this.state.direction) {
+			// down
+			case 4:
+				newSnake[0] = [this.state.snake[0][0], this.state.snake[0][1] - 1];
+				break;
+				// up
+			case 1:
+				newSnake[0] = [this.state.snake[0][0]-1, this.state.snake[0][1] ];
+				break;
+				// right
+			case 2:
+				newSnake[0] = [this.state.snake[0][0], this.state.snake[0][1] + 1];
+				break;
+				// left
+			case 3:
+				newSnake[0] = [this.state.snake[0][0] +1, this.state.snake[0][1]];
+				break;
+			default:
+        		newSnake[0] = [this.state.snake[0][0], this.state.snake[0][1]];
+				break;
+		}
+
+		newSnake.push( ...this.state.snake);
+		newSnake.pop();
+
+    	this.setState({ snake: newSnake });
+	};
+
+	componentDidMount(){
+		document.addEventListener('keydown',this.setDirection);
+	}
 
   	render() {
 
@@ -60,8 +136,10 @@ class App extends Component {
     	}
 
     	return (
-      		<div className="snake__app">
+      		<div className = "snake__app">
+
 			  	{overlay}
+
 				<div className="game__grid">
 					{cells}
         		</div>
