@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
 import { GridCell } from './Grid-cell';
+import { collisionTest } from './Functions';
 
 class App extends Component {
 
   	constructor(props) {
     	super(props);
     	this.state = {
-      	snake: [[10,10],[11,10],[12,10],[13,10]],
+      	snake: [],
       	apple: [],
       	bombs: [],
       	// 0 = not started, 1 = in progress, 2= finished
@@ -22,6 +23,7 @@ class App extends Component {
 		this.startGame = this.startGame.bind(this);
 		this.moveSnake = this.moveSnake.bind(this);
 		this.setDirection = this.setDirection.bind(this);
+		this.showApple = this.showApple.bind(this);
 
   	}
 
@@ -29,13 +31,12 @@ class App extends Component {
 	startGame() {
 
 		this.moveSnakeInterval = setInterval(this.moveSnake, 400);
+		this.showApple();
 
 		this.setState({
       		status: 1,
       		snake: [[10,10],[11,10],[12,10],[13,10]],
-      		apple: [1, 1]
     	});
-
 	}
 
 
@@ -59,6 +60,11 @@ class App extends Component {
     }
 
 
+	showApple() {
+    	const x = Math.floor(Math.random() * this.state.cellsX);
+    	const y = Math.floor(Math.random() * this.state.cellsY);
+    	this.setState({ apple: [x, y] });
+  	}
 
 
 	moveSnake() {
@@ -86,8 +92,13 @@ class App extends Component {
 				break;
 		}
 
-		newSnake.push( ...this.state.snake);
-		newSnake.pop();
+		if( collisionTest(this.state.apple[0],this.state.apple[1],newSnake) ){
+			newSnake.push( ...this.state.snake);
+			this.showApple();
+		}else{
+			newSnake.push( ...this.state.snake);
+			newSnake.pop();
+		}
 
     	this.setState({ snake: newSnake });
 	};
@@ -136,8 +147,14 @@ class App extends Component {
     	}
 
     	return (
-      		<div className = "snake__app">
-
+      		<div className = "snake__game">
+				<header className = "snake__game-header">
+					<h1>SNAKE</h1>
+					<div>
+						<span>score:</span>
+						<span className="snake__game-score">{this.state.snake.length}</span>
+					</div>
+				</header>
 			  	{overlay}
 
 				<div className="game__grid">

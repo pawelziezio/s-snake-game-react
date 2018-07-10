@@ -85,3 +85,17 @@ body{
 .mb-1{
 	margin-bottom: 1rem;
 }
+
+.snake__game-header{
+	display: flex;
+	justify-content: space-between;
+}
+
+.snake__game-header h1{
+	padding-top: 8px;
+}
+
+.snake__game-score{
+	font-size: 2.4rem;
+	font-weight: bold;
+}
