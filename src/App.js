@@ -25,6 +25,7 @@ class App extends Component {
 		this.moveSnake = this.moveSnake.bind(this);
 		this.setDirection = this.setDirection.bind(this);
 		this.showApple = this.showApple.bind(this);
+		this.gameover = this.gameover.bind(this);
 
   	}
 
@@ -34,6 +35,8 @@ class App extends Component {
 		this.setState({
       		status: 1,
       		snake: [[10,10],[11,10],[12,10],[13,10]],
+			speed: 400,
+			direction: 1
     	});
 
 		this.moveSnakeTimeoue = setTimeout(this.moveSnake, this.state.speed);
@@ -109,10 +112,30 @@ class App extends Component {
 			newSnake.pop();
 		}
 
+		if(	newSnake[0][0] < 0 ||
+            newSnake[0][0] >= this.state.cellsX ||
+            newSnake[0][1] < 0 ||
+            newSnake[0][1] >=this.state.cellsY ||
+            collisionTest(newSnake[0][0],newSnake[0][1],this.state.snake) ){
+            // location.reload()
+
+            this.gameover();
+			return false;
+        }
+
     	this.setState({ snake: newSnake });
 
-		this.moveSnakeTimeoue = setTimeout(this.moveSnake, this.state.speed);
+		this.moveSnakeTimeout = setTimeout(this.moveSnake, this.state.speed);
 	};
+
+
+	gameover(){
+		console.log('gameover')
+
+		if (this.moveSnakeTimeout) clearTimeout(this.moveSnakeTimeout);
+
+		this.setState({ status : 2 });
+	}
 
 	componentDidMount(){
 		document.addEventListener('keydown',this.setDirection);
@@ -144,15 +167,15 @@ class App extends Component {
     	if (this.state.status === 0) {
       		overlay = (
         		<div className="game__board-overlay">
-          			<button onClick={this.startGame}>START NEW GAME!</button>
+          			<button className="game__board-start-button"onClick={this.startGame}>START <br/> NEW GAME!</button>
         		</div>
       		);
     	} else if (this.state.status === 2) {
       		overlay = (
-        		<div className="gamer__board-overlay">
-          			<div className="mb-1"><b>GAME OVER!</b></div>
-          			<div className="mb-1">Your score: {this.state.snake.length} </div>
-          			<button onClick={this.startGame}>Start a new game</button>
+        		<div className="game__board-overlay">
+          			<div className="game__board-info">GAME OVER!</div>
+          			<div className="game__board-score">Your score: {this.state.snake.length} </div>
+          			<button className="game__board-gameover-button" onClick={this.startGame}>Start a new game!</button>
         		</div>
       		);
     	}

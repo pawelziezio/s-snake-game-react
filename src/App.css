@@ -59,17 +59,18 @@ body{
     cursor: pointer;
     line-height: 2.6rem;
     transition: all .2s;
-	border: 1px solid black;
-	cursor: pointer;
+	padding: 1em 2em;
+	/* border: 1px solid black; */
 }
 
-.game__board-overlay button{
+.game__board-start-button{
 	background-color: transparent;
-	padding: 1em 2em;
 	outline: none;
 	border: none;
 	font-size: 1.6rem;
-    font-weight: bold;
+	font-weight: bold;
+	line-height: 2.8rem;
+	cursor: pointer;
 }
 
 .game__board-overlay:hover{
@@ -82,10 +83,39 @@ body{
     box-shadow: none;
 }
 
-.mb-1{
-	margin-bottom: 1rem;
+/* -------GAMEOVER---------------------------- */
+.game__board-info{
+	margin: 0 0 .2em;
+	text-align: center;
+	font-weight: bold;
+	font-size: 2rem;
 }
-
+.game__board-score{
+	text-align: center;
+	margin: 0;
+}
+.game__board-gameover-button{
+	border: 2px solid black;
+	padding: .8em 1.6em;
+	text-align: center;
+	display: block;
+	margin: auto;
+	font-size: 1.4rem;
+	background-color: #0000cc;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-top: .6em;
+	outline: none;
+}
+.game__board-gameover-button:hover{
+    top: 49.8%;
+    box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+}
+.game__board-gameover-button:active{
+    top: 50%;
+    box-shadow: none;
+}
+/* ------------------------------------------- */
 .snake__game-header{
 	display: flex;
 	justify-content: space-between;
