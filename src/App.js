@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import { GridCell } from './Grid-cell';
-import { collisionTest, randomPositionXY } from './Functions';
+import { collisionTest, randomPositionXY, leadingZero } from './Functions';
+import Results from './Results';
 
 class App extends Component {
 
@@ -18,7 +19,7 @@ class App extends Component {
       	cellsX: 20,
       	cellsY: 20,
 		speed: 400,
-      	clickable: true
+      	results: []
     	};
 
 		this.startGame = this.startGame.bind(this);
@@ -34,7 +35,7 @@ class App extends Component {
 	startGame() {
 		this.setState({
       		status: 1,
-      		snake: [[10,10],[11,10],[12,10],[13,10],[14,10],[15,10]],
+      		snake: [[10,10]],
 			bombs:[],
 			speed: 400,
 			direction: 1
@@ -155,11 +156,46 @@ class App extends Component {
 		if (this.moveSnakeTimeout) clearTimeout(this.moveSnakeTimeout);
 		if (this.addBombInterval) clearTimeout(this.addBombInterval);
 		this.setState({ status : 2 });
+
+		const currentDate = new Date();
+		let score = this.state.snake.length;
+
+        const currentDateText = leadingZero(currentDate.getDate()) +
+            "." + leadingZero(currentDate.getMonth()+1) +
+            "." + currentDate.getFullYear();
+
+        const currentHourText = leadingZero(currentDate.getHours()) +
+            ':' + leadingZero(currentDate.getMinutes()) +
+            ':' + leadingZero(currentDate.getSeconds());
+
+		const lastResult = [];
+		lastResult.push(score, currentDateText, currentHourText);
+
+		if( this.state.results.length > 0  ){
+
+			let results = [...this.state.results]
+			results.push(lastResult);
+			results.sort( (a, b) => b[0] - a[0] );
+
+			if(results.length > 10){
+				results.pop();
+			}
+
+			localStorage.results = JSON.stringify(results);
+			this.setState({ results });
+		}else{
+			localStorage.results = JSON.stringify([lastResult]);
+			this.setState({ results: [lastResult] });
+		}
 	}
 
 
 	componentDidMount(){
 		document.addEventListener('keydown',this.setDirection);
+
+		if(localStorage.results){
+			this.setState({ results: JSON.parse(localStorage.results)})
+		}
 	}
 
 
@@ -198,6 +234,7 @@ class App extends Component {
         		<div className="game__board-overlay">
           			<div className="game__board-info">GAME OVER!</div>
           			<div className="game__board-score">Your score: {this.state.snake.length} </div>
+					<Results results={this.state.results}/>
           			<button className="game__board-gameover-button" onClick={this.startGame}>Start a new game!</button>
         		</div>
       		);
@@ -213,7 +250,6 @@ class App extends Component {
 					</div>
 				</header>
 			  	{overlay}
-
 				<div className="game__grid">
 					{cells}
         		</div>

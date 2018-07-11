@@ -13,3 +13,7 @@ export function randomPositionXY(maxX, maxY ){
             Math.floor(Math.random()*maxY)
         ]
     };
+
+export function leadingZero(i) {
+            return (i < 10)? '0'+i : i;
+        }
