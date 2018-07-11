@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { GridCell } from './Grid-cell';
-import { collisionTest } from './Functions';
+import { collisionTest, randomPositionXY } from './Functions';
 
 class App extends Component {
 
@@ -26,20 +26,22 @@ class App extends Component {
 		this.setDirection = this.setDirection.bind(this);
 		this.showApple = this.showApple.bind(this);
 		this.gameover = this.gameover.bind(this);
+		this.addBomb = this.addBomb.bind(this);
 
   	}
 
 
 	startGame() {
-
 		this.setState({
       		status: 1,
-      		snake: [[10,10],[11,10],[12,10],[13,10]],
+      		snake: [[10,10],[11,10],[12,10],[13,10],[14,10],[15,10]],
+			bombs:[],
 			speed: 400,
 			direction: 1
     	});
 
 		this.moveSnakeTimeoue = setTimeout(this.moveSnake, this.state.speed);
+		this.addBombInterval = setInterval(this.addBomb, 30000);
 		this.showApple();
 	}
 
@@ -67,12 +69,32 @@ class App extends Component {
 	showApple() {
     	const x = Math.floor(Math.random() * this.state.cellsX);
     	const y = Math.floor(Math.random() * this.state.cellsY);
-		if(collisionTest(x, y, this.state.snake)){
+
+		if(
+			collisionTest(x, y, this.state.snake) ||
+			collisionTest(x, y,this.state.bombs)
+		){
 			this.showApple();
 		}else{
     		this.setState({ apple: [x, y] });
 		}
   	}
+
+
+	addBomb(){
+		let newBomb = randomPositionXY(this.state.cellsX, this.state.cellsY);
+		if(
+			collisionTest(newBomb[0],newBomb[1],[this.state.apple]) ||
+			collisionTest(newBomb[0],newBomb[1],this.state.snake) ||
+			collisionTest(newBomb[0],newBomb[1],this.state.bombs)
+		){
+			this.addBomb();
+		}else{
+			let newBombsArray = [...this.state.bombs];
+			newBombsArray.push(newBomb);
+			this.setState({bombs: newBombsArray});
+		}
+	}
 
 
 	moveSnake() {
@@ -116,7 +138,8 @@ class App extends Component {
             newSnake[0][0] >= this.state.cellsX ||
             newSnake[0][1] < 0 ||
             newSnake[0][1] >=this.state.cellsY ||
-            collisionTest(newSnake[0][0],newSnake[0][1],this.state.snake) ){
+            collisionTest(newSnake[0][0],newSnake[0][1],this.state.snake) ||
+            collisionTest(newSnake[0][0],newSnake[0][1],this.state.bombs) ){
             // location.reload()
 
             this.gameover();
@@ -124,22 +147,21 @@ class App extends Component {
         }
 
     	this.setState({ snake: newSnake });
-
 		this.moveSnakeTimeout = setTimeout(this.moveSnake, this.state.speed);
 	};
 
 
 	gameover(){
-		console.log('gameover')
-
 		if (this.moveSnakeTimeout) clearTimeout(this.moveSnakeTimeout);
-
+		if (this.addBombInterval) clearTimeout(this.addBombInterval);
 		this.setState({ status : 2 });
 	}
+
 
 	componentDidMount(){
 		document.addEventListener('keydown',this.setDirection);
 	}
+
 
   	render() {
 
@@ -150,7 +172,8 @@ class App extends Component {
 				let appleCell = this.state.apple[0] === x && this.state.apple[1] === y;
 				let snakeCell = this.state.snake.filter(c => c[0] === x && c[1] === y);
 				snakeCell = !!snakeCell.length;
-				let bombCell;
+				let bombCell = this.state.bombs.filter(c => c[0] === x && c[1] === y);
+				bombCell = !!bombCell.length;;
 
 				cells.push(
 					<GridCell
